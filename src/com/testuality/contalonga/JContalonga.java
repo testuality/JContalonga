@@ -1,6 +1,7 @@
 package com.testuality.contalonga;
 
 import com.testuality.contalonga.gui.MenuBar;
+import com.testuality.contalonga.model.DataModel;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -8,10 +9,18 @@ import java.awt.*;
 import java.io.*;
 
 public class JContalonga extends JFrame {
+
+    private DataModel dataModel;
+
     public static void main(String[] args) {
         JContalonga app = new JContalonga();
         app.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         app.run();
+    }
+
+    public JContalonga() {
+        super();
+        this.dataModel = new DataModel();
     }
 
     private JPanel createButtonsContentPanel() {
@@ -97,30 +106,10 @@ public class JContalonga extends JFrame {
     }
 
     public void readDataFromFile(File file) {
-        try {
-            StringBuilder sb = new StringBuilder();
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String line = reader.readLine();
-            while (line != null) {
-                sb.append(line);
-                line = reader.readLine();
-            }
-            System.out.println(sb.toString());
-            reader.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.dataModel.readDataFromFile(file);
     }
 
     public void saveDataToFile(File file) {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            writer.write("Hello world");
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.dataModel.saveDataToFile(file);
     }
 }
