@@ -1,28 +1,17 @@
 package com.testuality.contalonga;
 
+import com.testuality.contalonga.gui.MenuBar;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
 
 public class JContalonga extends JFrame {
     public static void main(String[] args) {
         JContalonga app = new JContalonga();
         app.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         app.run();
-    }
-
-    private JMenuBar createMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-        JMenu fileMenu = new JMenu("File");
-        JMenuItem exitMenuItem = new JMenuItem("Exit");
-
-        fileMenu.add(exitMenuItem);
-        menuBar.add(fileMenu);
-        JMenu helpMenu = new JMenu("Help");
-        helpMenu.add(new JMenuItem("About..."));
-        menuBar.add(helpMenu);
-        return menuBar;
     }
 
     private JPanel createButtonsContentPanel() {
@@ -92,15 +81,46 @@ public class JContalonga extends JFrame {
         this.setSize(800, 600);
 
 
-        JMenuBar menuBar = this.createMenuBar();
 
         JPanel contentPanel = this.createEmailContentPanel();
 
         this.setLayout(new BorderLayout());
-        this.add(menuBar, BorderLayout.NORTH);
+        this.add(new MenuBar(this), BorderLayout.NORTH);
         this.add(contentPanel, BorderLayout.CENTER);
 
         this.pack();
         this.setVisible(true);
+    }
+
+    public void exit() {
+        this.dispose();
+    }
+
+    public void readDataFromFile(File file) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line = reader.readLine();
+            while (line != null) {
+                sb.append(line);
+                line = reader.readLine();
+            }
+            System.out.println(sb.toString());
+            reader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveDataToFile(File file) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            writer.write("Hello world");
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
