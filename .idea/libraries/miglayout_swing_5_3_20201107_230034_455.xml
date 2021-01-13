@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="miglayout-swing-5.3-20201107.230034-455">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/miglayout-swing-5.3-20201107.230034-455.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/lib/miglayout-swing-5.3-20201107.230034-455-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>

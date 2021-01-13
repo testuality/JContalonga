@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: com.testuality.contalonga.JContalonga
+SplashScreen-Image: splashscreen.png

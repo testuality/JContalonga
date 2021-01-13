@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="miglayout-core-5.3-20201107.230023-466">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/miglayout-core-5.3-20201107.230023-466.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/lib/miglayout-core-5.3-20201107.230023-466-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>
