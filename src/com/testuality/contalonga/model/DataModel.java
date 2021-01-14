@@ -20,6 +20,8 @@ public class DataModel {
     private List<BankMovement> bankMovementList;
     private List<Expense> expenseList;
     private List<Type> typeList;
+    private Map<String, String> typeNames;
+    private Map<String, String> subtypeNames;
 
     public void readDataFromFile(File file) {
         try {
@@ -51,6 +53,8 @@ public class DataModel {
     }
 
     private void readDataFromJsonModel(JsonModel jsonModel) {
+        this.typeNames = new HashMap<>();
+        this.subtypeNames = new HashMap<>();
         this.bankMovementList = new ArrayList<>();
         this.expenseList = new ArrayList<>();
         this.typeList = new ArrayList<>();
@@ -77,13 +81,33 @@ public class DataModel {
             for (JsonType jsonTy : jsonModel.getTypes()) {
                 List<Subtype> subTys = new ArrayList<>();
                 for (JsonSubtype jsonSty : jsonTy.getSubtypes()) {
-                    subTys.add(new Subtype(jsonSty.getId(), jsonSty.getName()));
+                    Subtype st = new Subtype(jsonSty.getId(), jsonSty.getName());
+                    subTys.add(st);
+                    this.subtypeNames.put(st.getId(), st.getName());
                 }
-                this.typeList.add(new Type(jsonTy.getId(), jsonTy.getName(), subTys));
+                Type t = new Type(jsonTy.getId(), jsonTy.getName(), subTys);
+                this.typeList.add(t);
+                this.typeNames.put(t.getId(), t.getName());
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getTypeName(String typeId) {
+        String name = null;
+        if (this.typeNames.containsKey(typeId)) {
+            name = this.typeNames.get(typeId);
+        }
+        return name;
+    }
+
+    public String getSubtypeName(String subtypeId) {
+        String name = null;
+        if (this.subtypeNames.containsKey(subtypeId)) {
+            name = this.subtypeNames.get(subtypeId);
+        }
+        return name;
     }
 
     public void saveDataToFile(File file) {
@@ -159,6 +183,18 @@ public class DataModel {
         jsonModel.setTypes(jsonTypeList);
 
         return jsonModel;
+    }
+
+    public List<Type> getTypes() {
+        return this.typeList;
+    }
+
+    public List<BankMovement> getBankMovements() {
+        return this.bankMovementList;
+    }
+
+    public List<Expense> getExpenses() {
+        return this.expenseList;
     }
 }
 

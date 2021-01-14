@@ -1,5 +1,6 @@
 package com.testuality.contalonga;
 
+import com.testuality.contalonga.gui.ContentPanel;
 import com.testuality.contalonga.gui.MenuBar;
 import com.testuality.contalonga.model.DataModel;
 import net.miginfocom.swing.MigLayout;
@@ -12,6 +13,7 @@ public class JContalonga extends JFrame {
 
     private DataModel dataModel;
     private File workingDirectory;
+    private ContentPanel contentPanel;
 
     public static void main(String[] args) {
         JContalonga app = new JContalonga();
@@ -90,15 +92,14 @@ public class JContalonga extends JFrame {
     }
 
     private void run() {
+        this.setTitle("JContalonga");
         this.setSize(800, 600);
 
-
-
-        JPanel contentPanel = this.createEmailContentPanel();
-
+        this.contentPanel = new ContentPanel(this.dataModel);
+        JScrollPane sp = new JScrollPane(this.contentPanel);
         this.setLayout(new BorderLayout());
         this.add(new MenuBar(this), BorderLayout.NORTH);
-        this.add(contentPanel, BorderLayout.CENTER);
+        this.add(sp, BorderLayout.CENTER);
 
         this.pack();
         this.setVisible(true);
@@ -118,9 +119,28 @@ public class JContalonga extends JFrame {
 
     public void readDataFromFile(File file) {
         this.dataModel.readDataFromFile(file);
+        this.reloadDataModel();
     }
 
     public void saveDataToFile(File file) {
         this.dataModel.saveDataToFile(file);
+    }
+
+    public void showBankMovements() {
+        this.contentPanel.showMovementsPanel();
+    }
+
+    public void showExpenses() {
+        this.contentPanel.showExpensesPanel();
+    }
+
+    public void showTypes() {
+        this.contentPanel.showTypesPanel();
+    }
+
+    public void reloadDataModel() {
+        this.contentPanel.reloadDataModel();
+        this.repaint();
+        this.update(this.getGraphics());
     }
 }

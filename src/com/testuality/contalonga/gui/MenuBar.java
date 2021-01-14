@@ -30,6 +30,18 @@ public class MenuBar extends JMenuBar {
         fileMenu.addSeparator();
         fileMenu.add(exitMenuItem);
         this.add(fileMenu);
+
+        JMenu viewMenu = new JMenu("View");
+        JMenuItem movementsMenuItem = new JMenuItem("Bank movements");
+        JMenuItem expensesMenuItem = new JMenuItem("Expenses");
+        JMenuItem typesMenuItem = new JMenuItem("Types");
+
+        viewMenu.add(movementsMenuItem);
+        viewMenu.add(expensesMenuItem);
+        viewMenu.add(typesMenuItem);
+        this.add(viewMenu);
+
+
         JMenu helpMenu = new JMenu("Help");
         helpMenu.add(new JMenuItem("About..."));
         this.add(helpMenu);
@@ -38,6 +50,49 @@ public class MenuBar extends JMenuBar {
         openMenuItem.addActionListener(new OpenFileActionListener(this.app));
         saveMenuItem.addActionListener(new SaveActionListener(this.app));
         saveAsMenuItem.addActionListener(new SaveAsActionListener(this.app));
+
+        movementsMenuItem.addActionListener(new ViewMovementsActionListener(this.app));
+        expensesMenuItem.addActionListener(new ViewExpensesActionListener(this.app));
+        typesMenuItem.addActionListener(new ViewTypesActionListener(this.app));
+    }
+}
+
+class ViewMovementsActionListener implements ActionListener {
+    private JContalonga app;
+
+    public ViewMovementsActionListener(JContalonga app) {
+        this.app = app;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        this.app.showBankMovements();
+    }
+}
+
+class ViewExpensesActionListener implements ActionListener {
+    private JContalonga app;
+
+    public ViewExpensesActionListener(JContalonga app) {
+        this.app = app;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        this.app.showExpenses();
+    }
+}
+
+class ViewTypesActionListener implements ActionListener {
+    private JContalonga app;
+
+    public ViewTypesActionListener(JContalonga app) {
+        this.app = app;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        this.app.showTypes();
     }
 }
 
