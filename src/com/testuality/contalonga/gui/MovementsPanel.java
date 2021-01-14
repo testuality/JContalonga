@@ -1,11 +1,14 @@
 package com.testuality.contalonga.gui;
 
 import com.testuality.contalonga.beans.BankMovement;
+import com.testuality.contalonga.beans.Subtype;
 import com.testuality.contalonga.beans.Type;
 import com.testuality.contalonga.model.DataModel;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -13,37 +16,52 @@ import java.util.Locale;
 
 public class MovementsPanel extends JPanel {
     private DataModel dataModel;
-    private JPanel reloadableDataPanel;
+    private JTable table;
+    private DefaultTableModel tableModel;
 
     public MovementsPanel(DataModel dataModel) {
         super();
         this.dataModel = dataModel;
 
-        this.setLayout(new BorderLayout());
-        this.reloadableDataPanel = null;
-        this.reloadDataModel();
+        this.tableModel = new DefaultTableModel();
+        this.tableModel.addColumn("Date");
+        this.tableModel.addColumn("Concept");
+        this.tableModel.addColumn("Amount");
+        this.table = new JTable(this.tableModel);
+        this.table.setEnabled(false);
+        this.table.getTableHeader().setVisible(true);
+        this.table.getTableHeader().setName("Types and subtypes");
+
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        this.table.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+
+        if (this.dataModel.getBankMovements() != null) {
+            addRowsToTableModel();
+        }
+        this.setLayout(new MigLayout());
+        this.add(new JScrollPane(this.table), "growx, pushx");
     }
 
-    public void reloadDataModel() {
-        if (this.reloadableDataPanel != null) {
-            this.remove(this.reloadableDataPanel);
-        }
-
+    private void addRowsToTableModel() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         NumberFormat nf= NumberFormat.getInstance(Locale.UK);
         nf.setMaximumFractionDigits(2);
         nf.setMinimumFractionDigits(2);
-        this.reloadableDataPanel = new JPanel();
-        this.reloadableDataPanel.setLayout(new MigLayout());
-        if (this.dataModel.getBankMovements() != null) {
-            for (BankMovement movement : this.dataModel.getBankMovements()) {
-                //this.reloadableDataPanel.add(new JLabel(movement.getId()));
-                this.reloadableDataPanel.add(new JLabel(sdf.format(movement.getDate().getTime())));
-                this.reloadableDataPanel.add(new JLabel(movement.getConcept()));
-                this.reloadableDataPanel.add(new JLabel(nf.format(movement.getAmount())), "right, wrap");
-            }
+        for (BankMovement movement : this.dataModel.getBankMovements()) {
+            this.tableModel.addRow(new String[]{
+                    sdf.format(movement.getDate().getTime()),
+                    movement.getConcept(),
+                    nf.format(movement.getAmount())});
         }
-        this.add(this.reloadableDataPanel, BorderLayout.CENTER);
-        this.repaint();
+    }
+
+    public void reloadDataModel() {
+        while (this.tableModel.getRowCount() > 0) {
+            this.tableModel.removeRow(0);
+        }
+        if (this.dataModel.getBankMovements() != null) {
+            this.addRowsToTableModel();
+        }
     }
 }

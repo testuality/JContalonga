@@ -6,43 +6,53 @@ import com.testuality.contalonga.model.DataModel;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.event.TableColumnModelListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
+import java.util.Enumeration;
 
 public class TypesPanel extends JPanel {
     private DataModel dataModel;
-    private JPanel reloadableDataPanel;
+    private JTable table;
+    private DefaultTableModel tableModel;
 
     public TypesPanel(DataModel dataModel) {
         super();
         this.dataModel = dataModel;
 
-        this.setIgnoreRepaint(false);
-        this.setLayout(new BorderLayout());
-        this.reloadableDataPanel = null;
-        this.reloadDataModel();
+        this.tableModel = new DefaultTableModel();
+        this.tableModel.addColumn("Type");
+        this.tableModel.addColumn("Subtypes");
+        this.table = new JTable(this.tableModel);
+        this.table.setEnabled(false);
+        this.table.getTableHeader().setVisible(true);
+        this.table.getTableHeader().setName("Types and subtypes");
+        if (this.dataModel.getTypes() != null) {
+            addRowsToTableModel();
+        }
+        this.setLayout(new MigLayout());
+        this.add(new JScrollPane(this.table), "growx, pushx");
+    }
+
+    private void addRowsToTableModel() {
+        for (Type type : this.dataModel.getTypes()) {
+            StringBuffer sb = new StringBuffer();
+            for (Subtype subtype : type.getSubtypeList()) {
+                sb.append(subtype.getName()).append(" ");
+            }
+            this.tableModel.addRow(new String[]{type.getName(), sb.toString()});
+        }
     }
 
     public void reloadDataModel() {
-        if (this.reloadableDataPanel != null) {
-            this.remove(this.reloadableDataPanel);
+        while (this.tableModel.getRowCount() > 0) {
+            this.tableModel.removeRow(0);
         }
-
-        this.reloadableDataPanel = new JPanel();
-        this.reloadableDataPanel.setLayout(new MigLayout());
         if (this.dataModel.getTypes() != null) {
-
-            this.reloadableDataPanel.add(new JLabel("Types"), "center");
-            this.reloadableDataPanel.add(new JLabel("Subtypes"), "center, wrap");
-            for (Type type : this.dataModel.getTypes()) {
-                this.reloadableDataPanel.add(new JLabel(type.getName()));
-                StringBuffer sb = new StringBuffer();
-                for (Subtype subtype : type.getSubtypeList()) {
-                    sb.append(subtype.getName()).append(" ");
-                }
-                this.reloadableDataPanel.add(new JLabel(sb.toString()), "wrap");
-            }
+            this.addRowsToTableModel();
         }
-        this.add(this.reloadableDataPanel, BorderLayout.CENTER);
-        this.repaint();
     }
 }
