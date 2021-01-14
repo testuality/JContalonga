@@ -1,25 +1,28 @@
 package com.testuality.contalonga.model;
 
-import com.testuality.contalonga.beans.BankMovement;
-import com.testuality.contalonga.beans.Expense;
-import com.testuality.contalonga.beans.Type;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.testuality.contalonga.beans.*;
+
+/*
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
+*/
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class DataModel {
     private List<BankMovement> bankMovementList;
     private List<Expense> expenseList;
     private List<Type> typeList;
 
-
     public void readDataFromFile(File file) {
         try {
+            /*
             StringBuilder sb = new StringBuilder();
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line = reader.readLine();
@@ -29,49 +32,61 @@ public class DataModel {
             }
             System.out.println(sb.toString());
             reader.close();
+            */
+            Gson gson = new Gson();
+            Object object = gson.fromJson(new FileReader(file), JsonModel.class);
+            JsonModel jsonModel = (JsonModel)object;
+            System.out.println(jsonModel.getDatetime());
+            System.out.println("Expenses " + jsonModel.getExpenses().size());
+            System.out.println("Movements " + jsonModel.getBankmovements().size());
+            System.out.println("Types " + jsonModel.getTypes().size());
 
-            // https://code.google.com/archive/p/json-simple/wikis/DecodingExamples.wiki
-            JSONParser parser = new JSONParser();
-            Object obj = parser.parse(sb.toString());
-            if (obj instanceof JSONObject) {
-                JSONObject jsonObj = (JSONObject) obj;
-                JSONArray jsonMovements = (JSONArray) jsonObj.get("bankmovements");
-                JSONArray jsonExpenses = (JSONArray) jsonObj.get("expenses");
-                JSONArray jsonTypes = (JSONArray) jsonObj.get("types");
-
-                List<BankMovement> bmList = this.parseJsonBankMovements(jsonMovements);
-                List<Expense> expList = this.parseJsonExpenses(jsonExpenses);
-                List<Type> tyList = this.parseJsonTypes(jsonTypes);
-            }
+            this.readDataFromJsonModel(jsonModel);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void readDataFromJsonModel(JsonModel jsonModel) {
+        this.bankMovementList = new ArrayList<>();
+        this.expenseList = new ArrayList<>();
+        this.typeList = new ArrayList<>();
+        try {
+            for (JsonBankMovement jsonMov : jsonModel.getBankmovements()) {
+                Date date1=new SimpleDateFormat("yyyy-MM-dd").parse(jsonMov.getDate());
+                GregorianCalendar date = new GregorianCalendar();
+                date.setTime(date1);
+                this.bankMovementList.add(
+                        new BankMovement(jsonMov.getId(), date, jsonMov.getConcept(),
+                                jsonMov.getAmount().doubleValue()));
+            }
+
+            for (JsonExpense jsonEx : jsonModel.getExpenses()) {
+                Date date1=new SimpleDateFormat("yyyy-MM-dd").parse(jsonEx.getDate());
+                GregorianCalendar date = new GregorianCalendar();
+                date.setTime(date1);
+                this.expenseList.add(
+                        new Expense(jsonEx.getId(), jsonEx.getMd5(), date, jsonEx.getTypeid(),
+                                jsonEx.getSubtypeid(), jsonEx.getDescription(),
+                                jsonEx.getAmount().doubleValue()));
+            }
+
+            for (JsonType jsonTy : jsonModel.getTypes()) {
+                List<Subtype> subTys = new ArrayList<>();
+                for (JsonSubtype jsonSty : jsonTy.getSubtypes()) {
+                    subTys.add(new Subtype(jsonSty.getId(), jsonSty.getName()));
+                }
+                this.typeList.add(new Type(jsonTy.getId(), jsonTy.getName(), subTys));
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
-    private List<BankMovement> parseJsonBankMovements(JSONArray jsonMovements) {
-        List<BankMovement> outList = new ArrayList<>();
-        for (Object obj : jsonMovements) {
-            JSONObject jsonMovement = (JSONObject) obj;
-            jsonMovement.get("id");
-        }
-        return outList;
-    }
-
-    private List<Expense> parseJsonExpenses(JSONArray jsonExpenses) {
-        List<Expense> outList = new ArrayList<>();
-        return outList;
-    }
-
-    private List<Type> parseJsonTypes(JSONArray jsonTypes) {
-        List<Type> outList = new ArrayList<>();
-        return outList;
-    }
-
     public void saveDataToFile(File file) {
+        /*
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             writer.write("Hello world");
@@ -79,5 +94,111 @@ public class DataModel {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+         */
+        try {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            FileWriter writer = new FileWriter(file);
+            gson.toJson(this.getJsonModel(), writer);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private JsonModel getJsonModel() {
+        JsonModel jsonModel = new JsonModel();
+
+        return jsonModel;
+    }
+}
+
+class JsonModel {
+    private String datetime;
+    private List<JsonExpense> expenses;
+    private List<JsonBankMovement> bankmovements;
+    private List<JsonType> types;
+
+    public String getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(String datetime) {
+        this.datetime = datetime;
+    }
+
+    public List<JsonExpense> getExpenses() {
+        return expenses;
+    }
+
+    public void setExpenses(List<JsonExpense> expenses) {
+        this.expenses = expenses;
+    }
+
+    public List<JsonBankMovement> getBankmovements() {
+        return bankmovements;
+    }
+
+    public void setBankmovements(List<JsonBankMovement> bankmovements) {
+        this.bankmovements = bankmovements;
+    }
+
+    public List<JsonType> getTypes() {
+        return types;
+    }
+
+    public void setTypes(List<JsonType> types) {
+        this.types = types;
+    }
+}
+
+class JsonType {
+    private String id;
+    private String name;
+    private List<JsonSubtype> subtypes;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<JsonSubtype> getSubtypes() {
+        return subtypes;
+    }
+
+    public void setSubtypes(List<JsonSubtype> subtypes) {
+        this.subtypes = subtypes;
+    }
+}
+
+class JsonSubtype {
+    private String id;
+    private String name;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
