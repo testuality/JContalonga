@@ -11,6 +11,7 @@ import java.io.*;
 public class JContalonga extends JFrame {
 
     private DataModel dataModel;
+    private File workingDirectory;
 
     public static void main(String[] args) {
         JContalonga app = new JContalonga();
@@ -21,6 +22,8 @@ public class JContalonga extends JFrame {
     public JContalonga() {
         super();
         this.dataModel = new DataModel();
+        this.workingDirectory = new File(System.getProperty("user.dir"));
+        System.out.println("Working directory " + this.workingDirectory.getPath());
     }
 
     private JPanel createButtonsContentPanel() {
@@ -99,6 +102,14 @@ public class JContalonga extends JFrame {
 
         this.pack();
         this.setVisible(true);
+    }
+
+    public File getWorkingDirectory() {
+        return workingDirectory;
+    }
+
+    public void setWorkingDirectory(File workingDirectory) {
+        this.workingDirectory = workingDirectory;
     }
 
     public void exit() {

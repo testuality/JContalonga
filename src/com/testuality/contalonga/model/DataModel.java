@@ -11,6 +11,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 */
 import java.io.*;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -108,6 +109,54 @@ public class DataModel {
 
     private JsonModel getJsonModel() {
         JsonModel jsonModel = new JsonModel();
+
+        GregorianCalendar now = new GregorianCalendar();
+        now.setTimeInMillis(System.currentTimeMillis());
+        jsonModel.setDatetime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(now.getTime()));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        List<JsonBankMovement> jsonBankMovementList = new ArrayList<>();
+        for (BankMovement bankMovement : this.bankMovementList) {
+            JsonBankMovement jsonBankMovement = new JsonBankMovement();
+            jsonBankMovement.setId(bankMovement.getId());
+            jsonBankMovement.setDate(sdf.format(bankMovement.getDate().getTime()));
+            jsonBankMovement.setConcept(bankMovement.getConcept());
+            jsonBankMovement.setAmount(new BigDecimal(bankMovement.getAmount()));
+            jsonBankMovementList.add(jsonBankMovement);
+        }
+        jsonModel.setBankmovements(jsonBankMovementList);
+
+        List<JsonExpense> jsonExpenseList = new ArrayList<>();
+        for (Expense expense : this.expenseList) {
+            JsonExpense jsonExpense = new JsonExpense();
+            jsonExpense.setId(expense.getId());
+            jsonExpense.setMd5(expense.getMd5());
+            jsonExpense.setDate(sdf.format(expense.getDate().getTime()));
+            jsonExpense.setDescription(expense.getDescription());
+            jsonExpense.setTypeid(expense.getTypeId());
+            jsonExpense.setSubtypeid(expense.getSubtypeId());
+            jsonExpense.setAmount(new BigDecimal(expense.getAmount()));
+            jsonExpenseList.add(jsonExpense);
+        }
+        jsonModel.setExpenses(jsonExpenseList);
+
+        List<JsonType> jsonTypeList = new ArrayList<>();
+        for (Type type : this.typeList) {
+            JsonType jsonType = new JsonType();
+            jsonType.setId(type.getId());
+            jsonType.setName(type.getName());
+
+            List<JsonSubtype> jsonSubtypeList = new ArrayList<>();
+            for (Subtype subtype : type.getSubtypeList()) {
+                JsonSubtype jsonSubtype = new JsonSubtype();
+                jsonSubtype.setId(subtype.getId());
+                jsonSubtype.setName(subtype.getName());
+                jsonSubtypeList.add(jsonSubtype);
+            }
+            jsonType.setSubtypes(jsonSubtypeList);
+            jsonTypeList.add(jsonType);
+        }
+        jsonModel.setTypes(jsonTypeList);
 
         return jsonModel;
     }
