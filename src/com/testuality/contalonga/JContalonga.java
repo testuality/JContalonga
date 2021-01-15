@@ -2,6 +2,7 @@ package com.testuality.contalonga;
 
 import com.testuality.contalonga.gui.ContentPanel;
 import com.testuality.contalonga.gui.MenuBar;
+import com.testuality.contalonga.gui.NewExpenseFrame;
 import com.testuality.contalonga.model.DataModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -14,6 +15,7 @@ public class JContalonga extends JFrame {
     private DataModel dataModel;
     private File workingDirectory;
     private ContentPanel contentPanel;
+    private MenuBar menuBar;
 
     public static void main(String[] args) {
         JContalonga app = new JContalonga();
@@ -95,10 +97,11 @@ public class JContalonga extends JFrame {
         this.setTitle("JContalonga");
         this.setSize(800, 600);
 
-        this.contentPanel = new ContentPanel(this.dataModel);
+        this.contentPanel = new ContentPanel(this.dataModel, this);
         JScrollPane sp = new JScrollPane(this.contentPanel);
         this.setLayout(new BorderLayout());
-        this.add(new MenuBar(this), BorderLayout.NORTH);
+        this.menuBar = new MenuBar(this);
+        this.add(this.menuBar, BorderLayout.NORTH);
         this.add(sp, BorderLayout.CENTER);
 
         this.pack();
@@ -138,9 +141,22 @@ public class JContalonga extends JFrame {
         this.contentPanel.showTypesPanel();
     }
 
+    public void showNewTypeForm() {
+        this.contentPanel.showNewTypeForm();
+    }
+
     public void reloadDataModel() {
         this.contentPanel.reloadDataModel();
-        this.repaint();
-        this.update(this.getGraphics());
+        this.menuBar.enableNewTypeMenuItem(true);
+        this.menuBar.enableSavesMenuItems(true);
+    }
+
+    public void reloadTypes() {
+        this.contentPanel.reloadTypes();
+    }
+
+    public void showNewExpenseDialog() {
+        NewExpenseFrame frame = new NewExpenseFrame(this.dataModel, this);
+        frame.setVisible(true);
     }
 }

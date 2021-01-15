@@ -13,15 +13,21 @@ import java.util.GregorianCalendar;
 
 public class MenuBar extends JMenuBar {
 
-    JContalonga app;
+    private JContalonga app;
+    private JMenuItem newTypeMenuItem;
+    private JMenuItem saveMenuItem;
+    private JMenuItem saveAsMenuItem;
+    private JMenuItem newExpenseMenuItem;
 
     public MenuBar(JContalonga jContalonga) {
         super();
         this.app = jContalonga;
         JMenu fileMenu = new JMenu("File");
         JMenuItem openMenuItem = new JMenuItem("Open...");
-        JMenuItem saveMenuItem = new JMenuItem("Save");
-        JMenuItem saveAsMenuItem = new JMenuItem("Save as...");
+        this.saveMenuItem = new JMenuItem("Save");
+        this.saveMenuItem.setEnabled(false);
+        this.saveAsMenuItem = new JMenuItem("Save as...");
+        this.saveAsMenuItem.setEnabled(false);
         JMenuItem exitMenuItem = new JMenuItem("Exit");
 
         fileMenu.add(openMenuItem);
@@ -41,6 +47,14 @@ public class MenuBar extends JMenuBar {
         viewMenu.add(typesMenuItem);
         this.add(viewMenu);
 
+        JMenu actionsMenu = new JMenu("Actions");
+        this.newTypeMenuItem = new JMenuItem("New type/subtype");
+        this.newTypeMenuItem.setEnabled(false);
+        actionsMenu.add(this.newTypeMenuItem);
+        this.newExpenseMenuItem = new JMenuItem("New expense");
+        this.newExpenseMenuItem.setEnabled(false);
+        actionsMenu.add(this.newExpenseMenuItem);
+        this.add(actionsMenu);
 
         JMenu helpMenu = new JMenu("Help");
         helpMenu.add(new JMenuItem("About..."));
@@ -51,9 +65,48 @@ public class MenuBar extends JMenuBar {
         saveMenuItem.addActionListener(new SaveActionListener(this.app));
         saveAsMenuItem.addActionListener(new SaveAsActionListener(this.app));
 
+        this.newTypeMenuItem.addActionListener(new NewTypeActionListener(this.app));
+        this.newExpenseMenuItem.addActionListener((new NewExpenseActionListener(this.app)));
+
         movementsMenuItem.addActionListener(new ViewMovementsActionListener(this.app));
         expensesMenuItem.addActionListener(new ViewExpensesActionListener(this.app));
         typesMenuItem.addActionListener(new ViewTypesActionListener(this.app));
+    }
+
+    public void enableNewTypeMenuItem(boolean enabled) {
+        this.newTypeMenuItem.setEnabled(enabled);
+        this.newExpenseMenuItem.setEnabled(enabled);
+    }
+
+    public void enableSavesMenuItems(boolean enabled) {
+        this.saveMenuItem.setEnabled(enabled);
+        this.saveAsMenuItem.setEnabled(enabled);
+    }
+}
+
+class NewExpenseActionListener implements ActionListener {
+    private JContalonga app;
+
+    public NewExpenseActionListener(JContalonga app) {
+        this.app = app;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        this.app.showNewExpenseDialog();
+    }
+}
+
+class NewTypeActionListener implements ActionListener {
+    private JContalonga app;
+
+    public NewTypeActionListener(JContalonga app) {
+        this.app = app;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        this.app.showNewTypeForm();
     }
 }
 
@@ -168,7 +221,7 @@ class OpenFileActionListener implements ActionListener {
         int returnVal = chooser.showOpenDialog(null);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             System.out.println("You chose to open this file: " +
-                    chooser.getSelectedFile().getName());
+                    chooser.getSelectedFile().getPath());
             File file = chooser.getSelectedFile();
             File dir = file.getParentFile();
             if (dir.isDirectory()) {

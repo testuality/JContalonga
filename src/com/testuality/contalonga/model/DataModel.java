@@ -12,6 +12,9 @@ import org.json.simple.parser.ParseException;
 */
 import java.io.*;
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -25,7 +28,7 @@ public class DataModel {
 
     public void readDataFromFile(File file) {
         try {
-            /*
+
             StringBuilder sb = new StringBuilder();
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line = reader.readLine();
@@ -33,11 +36,12 @@ public class DataModel {
                 sb.append(line);
                 line = reader.readLine();
             }
-            System.out.println(sb.toString());
+            System.out.println("***" + sb.toString() + "***");
             reader.close();
-            */
+
             Gson gson = new Gson();
-            Object object = gson.fromJson(new FileReader(file), JsonModel.class);
+            // Object object = gson.fromJson(new FileReader(file), JsonModel.class);
+            Object object = gson.fromJson(sb.toString(), JsonModel.class);
             JsonModel jsonModel = (JsonModel)object;
             System.out.println(jsonModel.getDatetime());
             System.out.println("Expenses " + jsonModel.getExpenses().size());
@@ -195,6 +199,49 @@ public class DataModel {
 
     public List<Expense> getExpenses() {
         return this.expenseList;
+    }
+
+    public void createNewType(String typeName) {
+        Type type = new Type(UUID.randomUUID().toString(), typeName, new ArrayList<Subtype>());
+        this.typeList.add(type);
+    }
+
+    public void createNewSubtype(String typeId, String subtypeName) {
+        Type type = null;
+        for (Type aux : this.typeList) {
+            if (aux.getId().equals(typeId)) {
+                type = aux;
+                break;
+            }
+        }
+        if (type != null) {
+            Subtype subtype = new Subtype(UUID.randomUUID().toString(), subtypeName);
+            type.getSubtypeList().add(subtype);
+        }
+    }
+
+    public void createNewExpense(GregorianCalendar date, String typeId, String subtypeId, String concept, double amount) {
+        String id = UUID.randomUUID().toString();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        NumberFormat nf= NumberFormat.getInstance(Locale.UK);
+        nf.setMaximumFractionDigits(2);
+        nf.setMinimumFractionDigits(2);
+        String aux = sdf.format(date.getTime()) +"#" + typeId + "#" + subtypeId + "#" + concept + "#" + nf.format(amount);
+        System.out.println("createNexExpense " + aux);
+        Expense expense = new Expense(id, Integer.toString(aux.hashCode()),date, typeId, subtypeId, concept, amount);
+        this.expenseList.add(expense);
+        this.sortExpenseList();
+    }
+
+    private void sortExpenseList() {
+        this.expenseList.sort(new ExpenseComparator());
+    }
+}
+
+class ExpenseComparator implements Comparator<Expense> {
+    @Override
+    public int compare(Expense o1, Expense o2) {
+        return o1.getDate().compareTo(o2.getDate());
     }
 }
 
