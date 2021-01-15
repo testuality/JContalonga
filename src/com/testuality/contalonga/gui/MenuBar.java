@@ -18,6 +18,8 @@ public class MenuBar extends JMenuBar {
     private JMenuItem saveMenuItem;
     private JMenuItem saveAsMenuItem;
     private JMenuItem newExpenseMenuItem;
+    private JMenuItem reportByTypeMenuItem;
+    private JMenuItem reportByYearMenuItem;
 
     public MenuBar(JContalonga jContalonga) {
         super();
@@ -42,9 +44,14 @@ public class MenuBar extends JMenuBar {
         JMenuItem expensesMenuItem = new JMenuItem("Expenses");
         JMenuItem typesMenuItem = new JMenuItem("Types");
 
+        this.reportByTypeMenuItem = new JMenuItem("Report by type...");
+        this.reportByYearMenuItem = new JMenuItem("Report by year...");
         viewMenu.add(movementsMenuItem);
         viewMenu.add(expensesMenuItem);
         viewMenu.add(typesMenuItem);
+        viewMenu.addSeparator();
+        viewMenu.add(this.reportByTypeMenuItem);
+        viewMenu.add(this.reportByYearMenuItem);
         this.add(viewMenu);
 
         JMenu actionsMenu = new JMenu("Actions");
@@ -57,7 +64,8 @@ public class MenuBar extends JMenuBar {
         this.add(actionsMenu);
 
         JMenu helpMenu = new JMenu("Help");
-        helpMenu.add(new JMenuItem("About..."));
+        JMenuItem aboutMenuItem = new JMenuItem("About...");
+        helpMenu.add(aboutMenuItem);
         this.add(helpMenu);
 
         exitMenuItem.addActionListener(new ExitActionListener(this.app));
@@ -65,182 +73,217 @@ public class MenuBar extends JMenuBar {
         saveMenuItem.addActionListener(new SaveActionListener(this.app));
         saveAsMenuItem.addActionListener(new SaveAsActionListener(this.app));
 
-        this.newTypeMenuItem.addActionListener(new NewTypeActionListener(this.app));
-        this.newExpenseMenuItem.addActionListener((new NewExpenseActionListener(this.app)));
-
         movementsMenuItem.addActionListener(new ViewMovementsActionListener(this.app));
         expensesMenuItem.addActionListener(new ViewExpensesActionListener(this.app));
         typesMenuItem.addActionListener(new ViewTypesActionListener(this.app));
+        this.reportByYearMenuItem.addActionListener(new ReportByYeaarActionListener());
+        this.reportByTypeMenuItem.addActionListener(new ReportByTypeActionListener());
+        this.newTypeMenuItem.addActionListener(new NewTypeActionListener(this.app));
+        this.newExpenseMenuItem.addActionListener((new NewExpenseActionListener(this.app)));
+
+        aboutMenuItem.addActionListener(new AboutActionListener(this.app));
     }
 
     public void enableNewTypeMenuItem(boolean enabled) {
         this.newTypeMenuItem.setEnabled(enabled);
         this.newExpenseMenuItem.setEnabled(enabled);
+
+        this.reportByTypeMenuItem.setEnabled(enabled);
+        this.reportByYearMenuItem.setEnabled(enabled);
     }
 
     public void enableSavesMenuItems(boolean enabled) {
         this.saveMenuItem.setEnabled(enabled);
         this.saveAsMenuItem.setEnabled(enabled);
     }
-}
 
-class NewExpenseActionListener implements ActionListener {
-    private JContalonga app;
-
-    public NewExpenseActionListener(JContalonga app) {
-        this.app = app;
+    class ReportByYeaarActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            app.showReportByYearDialog();
+        }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        this.app.showNewExpenseDialog();
-    }
-}
-
-class NewTypeActionListener implements ActionListener {
-    private JContalonga app;
-
-    public NewTypeActionListener(JContalonga app) {
-        this.app = app;
+    class ReportByTypeActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            app.showReportByTypeDialog();
+        }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        this.app.showNewTypeForm();
-    }
-}
+    class NewExpenseActionListener implements ActionListener {
+        private JContalonga app;
 
-class ViewMovementsActionListener implements ActionListener {
-    private JContalonga app;
+        public NewExpenseActionListener(JContalonga app) {
+            this.app = app;
+        }
 
-    public ViewMovementsActionListener(JContalonga app) {
-        this.app = app;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        this.app.showBankMovements();
-    }
-}
-
-class ViewExpensesActionListener implements ActionListener {
-    private JContalonga app;
-
-    public ViewExpensesActionListener(JContalonga app) {
-        this.app = app;
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            this.app.showNewExpenseDialog();
+        }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        this.app.showExpenses();
-    }
-}
+    class NewTypeActionListener implements ActionListener {
+        private JContalonga app;
 
-class ViewTypesActionListener implements ActionListener {
-    private JContalonga app;
+        public NewTypeActionListener(JContalonga app) {
+            this.app = app;
+        }
 
-    public ViewTypesActionListener(JContalonga app) {
-        this.app = app;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        this.app.showTypes();
-    }
-}
-
-class SaveActionListener implements ActionListener {
-    private JContalonga app;
-
-    public SaveActionListener(JContalonga app) {
-        this.app = app;
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            this.app.showNewTypeForm();
+        }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    class ViewMovementsActionListener implements ActionListener {
+        private JContalonga app;
 
-        GregorianCalendar now = new GregorianCalendar();
-        now.setTimeInMillis(System.currentTimeMillis());
-        String dateStr = new SimpleDateFormat("yyyyMMddHHmmss").format(now.getTime());
-        File dir = this.app.getWorkingDirectory();
+        public ViewMovementsActionListener(JContalonga app) {
+            this.app = app;
+        }
 
-        File file = Path.of(dir.getPath(), "contalonga-" + dateStr+".json").toFile();
-        System.out.println("Saving to file " + file.getPath());
-        this.app.saveDataToFile(file);
-    }
-}
-
-class SaveAsActionListener implements ActionListener {
-    private JContalonga app;
-
-    public SaveAsActionListener(JContalonga app) {
-        this.app = app;
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            this.app.showBankMovements();
+        }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.setDialogTitle("Save file of data");
-        chooser.setMultiSelectionEnabled(false);
-        chooser.setCurrentDirectory(this.app.getWorkingDirectory());
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                "JSON file", "json", "JSON");
-        chooser.setFileFilter(filter);
-        int returnVal = chooser.showSaveDialog(null);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            System.out.println("You chose to save this file: " +
-                    chooser.getSelectedFile().getName());
-            File file = chooser.getSelectedFile();
-            File dir = file.getParentFile();
-            if (dir.isDirectory()) {
-                this.app.setWorkingDirectory(dir);
-            }
+    class ViewExpensesActionListener implements ActionListener {
+        private JContalonga app;
+
+        public ViewExpensesActionListener(JContalonga app) {
+            this.app = app;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            this.app.showExpenses();
+        }
+    }
+
+    class ViewTypesActionListener implements ActionListener {
+        private JContalonga app;
+
+        public ViewTypesActionListener(JContalonga app) {
+            this.app = app;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            this.app.showTypes();
+        }
+    }
+
+    class SaveActionListener implements ActionListener {
+        private JContalonga app;
+
+        public SaveActionListener(JContalonga app) {
+            this.app = app;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            GregorianCalendar now = new GregorianCalendar();
+            now.setTimeInMillis(System.currentTimeMillis());
+            String dateStr = new SimpleDateFormat("yyyyMMddHHmmss").format(now.getTime());
+            File dir = this.app.getWorkingDirectory();
+
+            File file = Path.of(dir.getPath(), "contalonga-" + dateStr + ".json").toFile();
+            System.out.println("Saving to file " + file.getPath());
             this.app.saveDataToFile(file);
         }
     }
-}
 
-class OpenFileActionListener implements ActionListener {
-    private JContalonga app;
+    class SaveAsActionListener implements ActionListener {
+        private JContalonga app;
 
-    public OpenFileActionListener(JContalonga app) {
-        this.app = app;
+        public SaveAsActionListener(JContalonga app) {
+            this.app = app;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            chooser.setDialogTitle("Save file of data");
+            chooser.setMultiSelectionEnabled(false);
+            chooser.setCurrentDirectory(this.app.getWorkingDirectory());
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "JSON file", "json", "JSON");
+            chooser.setFileFilter(filter);
+            int returnVal = chooser.showSaveDialog(null);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                System.out.println("You chose to save this file: " +
+                        chooser.getSelectedFile().getName());
+                File file = chooser.getSelectedFile();
+                File dir = file.getParentFile();
+                if (dir.isDirectory()) {
+                    this.app.setWorkingDirectory(dir);
+                }
+                this.app.saveDataToFile(file);
+            }
+        }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.setDialogTitle("Open file of data");
-        chooser.setMultiSelectionEnabled(false);
-        chooser.setCurrentDirectory(this.app.getWorkingDirectory());
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                "JSON file", "json", "JSON");
-        chooser.setFileFilter(filter);
-        int returnVal = chooser.showOpenDialog(null);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            System.out.println("You chose to open this file: " +
-                    chooser.getSelectedFile().getPath());
-            File file = chooser.getSelectedFile();
-            File dir = file.getParentFile();
-            if (dir.isDirectory()) {
-                this.app.setWorkingDirectory(dir);
+    class OpenFileActionListener implements ActionListener {
+        private JContalonga app;
+
+        public OpenFileActionListener(JContalonga app) {
+            this.app = app;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            chooser.setDialogTitle("Open file of data");
+            chooser.setMultiSelectionEnabled(false);
+            chooser.setCurrentDirectory(this.app.getWorkingDirectory());
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "JSON file", "json", "JSON");
+            chooser.setFileFilter(filter);
+            int returnVal = chooser.showOpenDialog(null);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                System.out.println("You chose to open this file: " +
+                        chooser.getSelectedFile().getPath());
+                File file = chooser.getSelectedFile();
+                File dir = file.getParentFile();
+                if (dir.isDirectory()) {
+                    this.app.setWorkingDirectory(dir);
+                }
+                this.app.readDataFromFile(file);
             }
-            this.app.readDataFromFile(file);
+        }
+    }
+
+    class ExitActionListener implements ActionListener {
+        private JContalonga app;
+
+        public ExitActionListener(JContalonga app) {
+            this.app = app;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            this.app.exit();
+        }
+    }
+
+    class AboutActionListener implements ActionListener {
+        private JContalonga app;
+
+        public AboutActionListener(JContalonga app) {
+            this.app = app;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(this.app, "Version " + JContalonga.getVersionNumber() + " of date " +
+                    JContalonga.getVersionDate(), "About JContalonga", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 }
 
-class ExitActionListener implements ActionListener {
-    private JContalonga app;
-
-    public ExitActionListener(JContalonga app) {
-        this.app = app;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        this.app.exit();
-    }
-}

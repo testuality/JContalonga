@@ -236,6 +236,16 @@ public class DataModel {
     private void sortExpenseList() {
         this.expenseList.sort(new ExpenseComparator());
     }
+
+    public double getTotalExpenseAmountByYear(int year) {
+        double total = 0.0;
+        for (Expense expense : this.expenseList) {
+            if (expense.getDate().get(Calendar.YEAR) == year) {
+                total += expense.getAmount();
+            }
+        }
+        return total;
+    }
 }
 
 class ExpenseComparator implements Comparator<Expense> {

@@ -1,8 +1,7 @@
 package com.testuality.contalonga;
 
-import com.testuality.contalonga.gui.ContentPanel;
+import com.testuality.contalonga.gui.*;
 import com.testuality.contalonga.gui.MenuBar;
-import com.testuality.contalonga.gui.NewExpenseFrame;
 import com.testuality.contalonga.model.DataModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -12,6 +11,8 @@ import java.io.*;
 
 public class JContalonga extends JFrame {
 
+    private final static String versionNumber = "1.0.0";
+    private final static String versionDate = "2020-01-15";
     private DataModel dataModel;
     private File workingDirectory;
     private ContentPanel contentPanel;
@@ -157,6 +158,24 @@ public class JContalonga extends JFrame {
 
     public void showNewExpenseDialog() {
         NewExpenseFrame frame = new NewExpenseFrame(this.dataModel, this);
+        frame.setVisible(true);
+    }
+
+    public static String getVersionNumber() {
+        return versionNumber;
+    }
+
+    public static String getVersionDate() {
+        return versionDate;
+    }
+
+    public void showReportByTypeDialog() {
+        ReportByTypeFrame frame = new ReportByTypeFrame(this.dataModel, this);
+        frame.setVisible(true);
+    }
+
+    public void showReportByYearDialog() {
+        ReportByYearFrame frame = new ReportByYearFrame(this.dataModel, this);
         frame.setVisible(true);
     }
 }
