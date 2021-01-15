@@ -25,4 +25,8 @@ public class Type {
     public List<Subtype> getSubtypeList() {
         return subtypeList;
     }
+
+    public String toString() {
+        return this.name;
+    }
 }
