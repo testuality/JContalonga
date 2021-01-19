@@ -12,8 +12,6 @@ import org.json.simple.parser.ParseException;
 */
 import java.io.*;
 import java.math.BigDecimal;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -245,6 +243,90 @@ public class DataModel {
             }
         }
         return total;
+    }
+
+    public ReportForYear getReportForYear(int year) {
+
+        double total = 0.0;
+        for (Expense expense : this.expenseList) {
+            if (expense.getDate().get(Calendar.YEAR) == year) {
+                total += expense.getAmount();
+            }
+        }
+        ReportForYear rbt = new ReportForYear(year, total);
+
+        for (Type type : this.typeList) {
+            double typeTotal = 0.0;
+            for (Expense expense : this.expenseList) {
+                if (expense.getDate().get(Calendar.YEAR) == year && expense.getTypeId().equals(type.getId())) {
+                    typeTotal += expense.getAmount();
+                }
+            }
+            double percent =  typeTotal * 100.0/ total;
+            ReportItem item = new ReportItem(type, null, typeTotal, percent);
+            rbt.getByTypeList().add(item);
+        }
+
+        for (Type type : this.typeList) {
+            for (Subtype subtype : type.getSubtypeList()) {
+                double typesubtypeTotal = 0;
+                for (Expense expense : this.expenseList) {
+                    if (expense.getDate().get(Calendar.YEAR) == year &&
+                        expense.getTypeId().equals(type.getId()) &&
+                        expense.getSubtypeId().equals(subtype.getId())) {
+                        typesubtypeTotal += expense.getAmount();
+                    }
+                }
+                double percent = typesubtypeTotal * 100.0 / total;
+                ReportItem item = new ReportItem(type, subtype, typesubtypeTotal, percent);
+                rbt.getByTypeSubtypeList().add(item);
+            }
+        }
+        return rbt;
+    }
+
+    public ReportForType getReportForType(Type type) {
+        double total = 0.0;
+        for (Expense expense : this.expenseList) {
+            if (expense.getTypeId().equals(type.getId())) {
+                total += expense.getAmount();
+            }
+        }
+
+        ReportForType rft = new ReportForType(type, total);
+        int yearIni = this.expenseList.get(0).getDate().get(Calendar.YEAR);
+        int yearEnd = this.expenseList.get(this.expenseList.size() - 1).getDate().get(Calendar.YEAR) + 1;
+
+        for (int year = yearIni; year <= yearEnd; year++) {
+            double yearTotal = 0.0;
+            for (Expense expense : this.expenseList) {
+                if (expense.getDate().get(Calendar.YEAR) == year && expense.getTypeId().equals(type.getId())) {
+                    yearTotal += expense.getAmount();
+                }
+            }
+            double percent =  yearTotal * 100.0/ total;
+            ReportItem item = new ReportItem(type, null, yearTotal, percent);
+            rft.getTypeList().add(item);
+        }
+
+        for (Subtype subtype : type.getSubtypeList()) {
+            List<ReportItem> list = new ArrayList<>();
+            for (int year = yearIni; year <= yearEnd; year++) {
+                double yearTotal = 0.0;
+                for (Expense expense : this.expenseList) {
+                    if (expense.getDate().get(Calendar.YEAR) == year &&
+                            expense.getTypeId().equals(type.getId()) &&
+                            expense.getSubtypeId().equals(subtype.getId())) {
+                        yearTotal += expense.getAmount();
+                    }
+                }
+                double percent =  yearTotal * 100.0/ total;
+                ReportItem item = new ReportItem(type, subtype, yearTotal, percent);
+                list.add(item);
+            }
+            rft.getSubtypeLists().add(list);
+        }
+        return rft;
     }
 }
 
