@@ -1,6 +1,7 @@
 package com.testuality.contalonga.gui;
 
 import com.testuality.contalonga.JContalonga;
+import com.testuality.contalonga.mongodb.Mongodb;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -20,6 +21,7 @@ public class MenuBar extends JMenuBar {
     private JMenuItem newExpenseMenuItem;
     private JMenuItem reportByTypeMenuItem;
     private JMenuItem reportByYearMenuItem;
+    private JMenuItem reportsMenuItem;
 
     public MenuBar(JContalonga jContalonga) {
         super();
@@ -46,12 +48,15 @@ public class MenuBar extends JMenuBar {
 
         this.reportByTypeMenuItem = new JMenuItem("Report by type...");
         this.reportByYearMenuItem = new JMenuItem("Report by year...");
+        this.reportsMenuItem = new JMenuItem("Reports");
         viewMenu.add(movementsMenuItem);
         viewMenu.add(expensesMenuItem);
         viewMenu.add(typesMenuItem);
         viewMenu.addSeparator();
         viewMenu.add(this.reportByTypeMenuItem);
         viewMenu.add(this.reportByYearMenuItem);
+        viewMenu.addSeparator();
+        viewMenu.add(this.reportsMenuItem);
         this.add(viewMenu);
 
         JMenu actionsMenu = new JMenu("Actions");
@@ -78,6 +83,7 @@ public class MenuBar extends JMenuBar {
         typesMenuItem.addActionListener(new ViewTypesActionListener(this.app));
         this.reportByYearMenuItem.addActionListener(new ReportByYeaarActionListener());
         this.reportByTypeMenuItem.addActionListener(new ReportByTypeActionListener());
+        this.reportsMenuItem.addActionListener(new ReportsActionListener());
         this.newTypeMenuItem.addActionListener(new NewTypeActionListener(this.app));
         this.newExpenseMenuItem.addActionListener((new NewExpenseActionListener(this.app)));
 
@@ -95,6 +101,13 @@ public class MenuBar extends JMenuBar {
     public void enableSavesMenuItems(boolean enabled) {
         this.saveMenuItem.setEnabled(enabled);
         this.saveAsMenuItem.setEnabled(enabled);
+    }
+
+    class ReportsActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            app.showReportsForm();
+        }
     }
 
     class ReportByYeaarActionListener implements ActionListener {

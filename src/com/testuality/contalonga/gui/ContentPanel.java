@@ -14,6 +14,7 @@ public class ContentPanel extends JPanel {
     private ExpensesPanel expensesPanel;
     private TypesPanel typesPanel;
     private NewTypeFormPanel newTypeFormPanel;
+    private ReportPanel reportPanel;
 
     public ContentPanel(DataModel dataModel, JContalonga app) {
         super();
@@ -23,12 +24,14 @@ public class ContentPanel extends JPanel {
         this.expensesPanel = new ExpensesPanel(this.dataModel);
         this.typesPanel = new TypesPanel(this.dataModel);
         this.newTypeFormPanel = new NewTypeFormPanel(this.dataModel, this.app);
+        this.reportPanel = new ReportPanel(this.dataModel, this.app);
 
         this.setLayout(new CardLayout());
         this.add(movementsPanel, "movements");
         this.add(expensesPanel, "expenses");
         this.add(typesPanel, "types");
         this.add(newTypeFormPanel, "newtypeform");
+        this.add(this.reportPanel, "reports");
     }
 
     public void showMovementsPanel() {
@@ -51,15 +54,21 @@ public class ContentPanel extends JPanel {
         cl.show(this, "newtypeform");
     }
 
+    public void showReportsForm() {
+        CardLayout cl = (CardLayout) this.getLayout();
+        cl.show(this, "reports");
+    }
+
     public void reloadDataModel() {
         this.movementsPanel.reloadDataModel();
         this.expensesPanel.reloadDataModel();
         this.typesPanel.reloadDataModel();
         this.newTypeFormPanel.reloadTypes();
+        this.reportPanel.reloadDataModel();
     }
 
     public void reloadTypes() {
         this.typesPanel.reloadDataModel();
+        this.reportPanel.reloadTypes();
     }
-
 }

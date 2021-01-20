@@ -146,6 +146,10 @@ public class JContalonga extends JFrame {
         this.contentPanel.showNewTypeForm();
     }
 
+    public void showReportsForm() {
+        this.contentPanel.showReportsForm();
+    }
+
     public void reloadDataModel() {
         this.contentPanel.reloadDataModel();
         this.menuBar.enableNewTypeMenuItem(true);
@@ -178,4 +182,5 @@ public class JContalonga extends JFrame {
         ReportByYearFrame frame = new ReportByYearFrame(this.dataModel, this);
         frame.setVisible(true);
     }
+
 }
