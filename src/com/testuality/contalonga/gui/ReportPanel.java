@@ -29,18 +29,22 @@ public class ReportPanel extends JPanel {
         this.typesCombo = new JComboBox();
         this.fillTypesCombo();
         JButton byTypeBtn = new JButton("Create report");
+        JButton byTypeChartBtn = new JButton("Create chart");
         byTypePanel.add(new JLabel("Type"));
         byTypePanel.add(this.typesCombo);
         byTypePanel.add(byTypeBtn);
+        byTypePanel.add(byTypeChartBtn);
 
         JPanel byYearPanel = new JPanel();
         byYearPanel.setBorder(BorderFactory.createTitledBorder("Report by type for year"));
         this.yearCombo = new JComboBox();
         this.fillYearsCombo();
         JButton byYearBtn = new JButton("Create report");
+        JButton byYearChartBtn = new JButton("Create chart");
         byYearPanel.add(new JLabel("Year"));
         byYearPanel.add(this.yearCombo);
         byYearPanel.add(byYearBtn);
+        byYearPanel.add(byYearChartBtn);
 
         this.add(byTypePanel, "wrap");
         this.add(byYearPanel);
@@ -54,11 +58,29 @@ public class ReportPanel extends JPanel {
             }
         });
 
+        byTypeChartBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Type type =(Type)typesCombo.getSelectedItem();
+                JFrame f = new ChartByTypeFrame(dataModel, app, type);
+                f.setVisible(true);
+            }
+        });
+
         byYearBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Integer year = (Integer)yearCombo.getSelectedItem();
                 JFrame f = new ReportByYearFrame(dataModel, app, year.intValue());
+                f.setVisible(true);
+            }
+        });
+
+        byYearChartBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Integer year = (Integer)yearCombo.getSelectedItem();
+                JFrame f = new ChartByYearFrame(dataModel, app, year.intValue());
                 f.setVisible(true);
             }
         });
