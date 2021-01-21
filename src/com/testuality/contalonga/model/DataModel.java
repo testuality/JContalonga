@@ -263,7 +263,7 @@ public class DataModel {
                 }
             }
             double percent =  typeTotal * 100.0/ total;
-            ReportItem item = new ReportItem(type, null, typeTotal, percent);
+            ReportItem item = new ReportItem(year, type, null, typeTotal, percent);
             rbt.getByTypeList().add(item);
         }
 
@@ -278,7 +278,7 @@ public class DataModel {
                     }
                 }
                 double percent = typesubtypeTotal * 100.0 / total;
-                ReportItem item = new ReportItem(type, subtype, typesubtypeTotal, percent);
+                ReportItem item = new ReportItem(year, type, subtype, typesubtypeTotal, percent);
                 rbt.getByTypeSubtypeList().add(item);
             }
         }
@@ -294,7 +294,7 @@ public class DataModel {
         }
 
         ReportForType rft = new ReportForType(type, total);
-        int yearIni = this.expenseList.get(0).getDate().get(Calendar.YEAR);
+        int yearIni = 2006; // this.expenseList.get(0).getDate().get(Calendar.YEAR);
         int yearEnd = this.expenseList.get(this.expenseList.size() - 1).getDate().get(Calendar.YEAR) + 1;
 
         for (int year = yearIni; year <= yearEnd; year++) {
@@ -305,8 +305,8 @@ public class DataModel {
                 }
             }
             double percent =  yearTotal * 100.0/ total;
-            ReportItem item = new ReportItem(type, null, yearTotal, percent);
-            rft.getTypeList().add(item);
+            ReportItem item = new ReportItem(year, type, null, yearTotal, percent);
+            rft.getByTypeList().add(item);
         }
 
         for (Subtype subtype : type.getSubtypeList()) {
@@ -321,10 +321,10 @@ public class DataModel {
                     }
                 }
                 double percent =  yearTotal * 100.0/ total;
-                ReportItem item = new ReportItem(type, subtype, yearTotal, percent);
+                ReportItem item = new ReportItem(year, type, subtype, yearTotal, percent);
                 list.add(item);
             }
-            rft.getSubtypeLists().add(list);
+            rft.getBySubtypeLists().add(list);
         }
         return rft;
     }

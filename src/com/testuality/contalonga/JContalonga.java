@@ -173,14 +173,4 @@ public class JContalonga extends JFrame {
         return versionDate;
     }
 
-    public void showReportByTypeDialog() {
-        ReportByTypeFrame frame = new ReportByTypeFrame(this.dataModel, this);
-        frame.setVisible(true);
-    }
-
-    public void showReportByYearDialog() {
-        ReportByYearFrame frame = new ReportByYearFrame(this.dataModel, this);
-        frame.setVisible(true);
-    }
-
 }

@@ -19,8 +19,6 @@ public class MenuBar extends JMenuBar {
     private JMenuItem saveMenuItem;
     private JMenuItem saveAsMenuItem;
     private JMenuItem newExpenseMenuItem;
-    private JMenuItem reportByTypeMenuItem;
-    private JMenuItem reportByYearMenuItem;
     private JMenuItem reportsMenuItem;
 
     public MenuBar(JContalonga jContalonga) {
@@ -46,15 +44,11 @@ public class MenuBar extends JMenuBar {
         JMenuItem expensesMenuItem = new JMenuItem("Expenses");
         JMenuItem typesMenuItem = new JMenuItem("Types");
 
-        this.reportByTypeMenuItem = new JMenuItem("Report by type...");
-        this.reportByYearMenuItem = new JMenuItem("Report by year...");
         this.reportsMenuItem = new JMenuItem("Reports");
+        this.reportsMenuItem.setEnabled(false);
         viewMenu.add(movementsMenuItem);
         viewMenu.add(expensesMenuItem);
         viewMenu.add(typesMenuItem);
-        viewMenu.addSeparator();
-        viewMenu.add(this.reportByTypeMenuItem);
-        viewMenu.add(this.reportByYearMenuItem);
         viewMenu.addSeparator();
         viewMenu.add(this.reportsMenuItem);
         this.add(viewMenu);
@@ -81,8 +75,6 @@ public class MenuBar extends JMenuBar {
         movementsMenuItem.addActionListener(new ViewMovementsActionListener(this.app));
         expensesMenuItem.addActionListener(new ViewExpensesActionListener(this.app));
         typesMenuItem.addActionListener(new ViewTypesActionListener(this.app));
-        this.reportByYearMenuItem.addActionListener(new ReportByYeaarActionListener());
-        this.reportByTypeMenuItem.addActionListener(new ReportByTypeActionListener());
         this.reportsMenuItem.addActionListener(new ReportsActionListener());
         this.newTypeMenuItem.addActionListener(new NewTypeActionListener(this.app));
         this.newExpenseMenuItem.addActionListener((new NewExpenseActionListener(this.app)));
@@ -94,8 +86,7 @@ public class MenuBar extends JMenuBar {
         this.newTypeMenuItem.setEnabled(enabled);
         this.newExpenseMenuItem.setEnabled(enabled);
 
-        this.reportByTypeMenuItem.setEnabled(enabled);
-        this.reportByYearMenuItem.setEnabled(enabled);
+        this.reportsMenuItem.setEnabled(enabled);
     }
 
     public void enableSavesMenuItems(boolean enabled) {
@@ -107,20 +98,6 @@ public class MenuBar extends JMenuBar {
         @Override
         public void actionPerformed(ActionEvent e) {
             app.showReportsForm();
-        }
-    }
-
-    class ReportByYeaarActionListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            app.showReportByYearDialog();
-        }
-    }
-
-    class ReportByTypeActionListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            app.showReportByTypeDialog();
         }
     }
 

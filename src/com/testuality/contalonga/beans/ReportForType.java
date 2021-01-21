@@ -21,11 +21,11 @@ public class ReportForType {
         return type;
     }
 
-    public List<ReportItem> getTypeList() {
+    public List<ReportItem> getByTypeList() {
         return typeList;
     }
 
-    public List<List<ReportItem>> getSubtypeLists() {
+    public List<List<ReportItem>> getBySubtypeLists() {
         return subtypeLists;
     }
 }
