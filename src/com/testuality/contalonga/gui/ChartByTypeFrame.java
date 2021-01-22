@@ -3,6 +3,9 @@ package com.testuality.contalonga.gui;
 import com.testuality.contalonga.JContalonga;
 import com.testuality.contalonga.model.DataModel;
 import net.miginfocom.swing.MigLayout;
+import org.knowm.xchart.QuickChart;
+import org.knowm.xchart.XChartPanel;
+import org.knowm.xchart.XYChart;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,14 +31,14 @@ public class ChartByTypeFrame extends JFrame {
         //this.setAlwaysOnTop(true);
         this.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         this.setLocationRelativeTo(this.app);
+        this.setSize(400,400);
 
         JPanel panel = new JPanel();
         panel.setLayout(new MigLayout());
 
         panel.add(new JLabel("Chart by year for type " + this.type.getName()), "wrap");
 
-        this.chartsPanel = new JPanel();
-        this.chartsPanel.setLayout(new MigLayout());
+        this.chartsPanel = this.getChartPanel();
         panel.add(this.chartsPanel, "wrap");
 
         JButton closeBtn = new JButton("Close");
@@ -48,11 +51,30 @@ public class ChartByTypeFrame extends JFrame {
         });
 
         this.add(new JScrollPane(panel));
-        this.createChart();
-        this.pack();
+        //this.pack();
     }
 
-    private void createChart() {
+    private JPanel getChartPanel() {
+        double[] xData = new double[] { 0.0, 1.0, 2.0 };
+        double[] yData = new double[] { 2.0, 1.0, 0.0 };
+
+        // Create Chart
+        XYChart chart = QuickChart.getChart("Sample Chart", "X", "Y", "y(x)", xData, yData);
+        return new XChartPanel<>(chart);
+    }
+}
+
+class ChartPanel extends JPanel {
+
+    @Override
+    public void paint(Graphics g) {
+        double[] xData = new double[] { 0.0, 1.0, 2.0 };
+        double[] yData = new double[] { 2.0, 1.0, 0.0 };
+
+        // Create Chart
+        XYChart chart = QuickChart.getChart("Sample Chart",
+                "X", "Y", "y(x)", xData, yData);
+        chart.paint((Graphics2D) g, 300,300);
 
     }
 }

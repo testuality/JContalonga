@@ -10,5 +10,6 @@
     <orderEntry type="library" name="miglayout-core-5.3-20201107.230023-466" level="project" />
     <orderEntry type="library" name="miglayout-swing-5.3-20201107.230034-455" level="project" />
     <orderEntry type="library" name="gson-2.8.6" level="project" />
+    <orderEntry type="library" name="xchart-3.8.0" level="project" />
   </component>
 </module>

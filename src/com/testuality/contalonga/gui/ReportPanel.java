@@ -4,6 +4,9 @@ import com.testuality.contalonga.JContalonga;
 import com.testuality.contalonga.beans.Type;
 import com.testuality.contalonga.model.DataModel;
 import net.miginfocom.swing.MigLayout;
+import org.knowm.xchart.QuickChart;
+import org.knowm.xchart.SwingWrapper;
+import org.knowm.xchart.XYChart;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

@@ -1,5 +1,5 @@
 
 XChart -- Charts for java
 https://knowm.org/open-source/xchart/
-
+https://www.programcreek.com/java-api-examples/?api=org.knowm.xchart.XChartPanel
 
